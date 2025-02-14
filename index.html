@@ -1,39 +1,21 @@
 <!DOCTYPE html>
-<!--
-Copyright 2012 Mozilla Foundation
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-Adobe CMap resources are covered by their own copyright but the same license:
-
-    Copyright 1990-2015 Adobe Systems Incorporated.
-
-See https://github.com/adobe-type-tools/cmap-resources
--->
 <html dir="ltr" mozdisallowselectionprint>
   <head>
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="google" content="notranslate">
     <title>PDF.js viewer</title>
 
 <!-- This snippet is used in production (included from viewer.html) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="resource" type="application/l10n" href="locale/locale.json">
 <script src="../build/pdf.mjs" type="module"></script>
 
     <link rel="stylesheet" href="viewer.css">
 
   <script src="viewer.mjs" type="module"></script>
+  <script src="script.js" ></script>
   
   <base href="https://mozilla.github.io">
   </head>
@@ -41,9 +23,9 @@ See https://github.com/adobe-type-tools/cmap-resources
   <body tabindex="0">
     <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
 
-    <div id="outerContainer">
+    <div id="outerContainer" style="height: 100%;">
 
-      <div id="sidebarContainer">
+      <div id="sidebarContainer" >
         <div id="toolbarSidebar" class="toolbarHorizontalGroup">
           <div id="toolbarSidebarLeft">
             <div id="sidebarViewButtons" class="toolbarHorizontalGroup toggled" role="radiogroup">
@@ -62,7 +44,7 @@ See https://github.com/adobe-type-tools/cmap-resources
             </div>
           </div>
 
-          <div id="toolbarSidebarRight">
+          <div id="toolbarSidebarRight" >
             <div id="outlineOptionsContainer" class="toolbarHorizontalGroup">
               <div class="verticalToolbarSeparator"></div>
 
@@ -85,9 +67,9 @@ See https://github.com/adobe-type-tools/cmap-resources
         <div id="sidebarResizer"></div>
       </div>  <!-- sidebarContainer -->
 
-      <div id="mainContainer">
-        <div class="toolbar">
-          <div id="toolbarContainer">
+      <div id="mainContainer" >
+        <div class="toolbar" >
+          <div id="toolbarContainer" >
             <div id="toolbarViewer" class="toolbarHorizontalGroup">
               <div id="toolbarViewerLeft" class="toolbarHorizontalGroup">
                 <button id="sidebarToggleButton" class="toolbarButton" type="button" title="Toggle Sidebar" tabindex="0" data-l10n-id="pdfjs-toggle-sidebar-button" aria-expanded="false" aria-haspopup="true" aria-controls="sidebarContainer">
@@ -155,6 +137,7 @@ See https://github.com/adobe-type-tools/cmap-resources
                     <input type="number" id="pageNumber" class="toolbarField" title="Page" value="1" min="1" tabindex="0" data-l10n-id="pdfjs-page-input" autocomplete="off">
                   </span>
                   <span id="numPages" class="toolbarLabel"></span>
+                  <span class="toolbarLabel" onclick="getSelectionText()">Check</span>
                 </div>
               </div>
               <div id="toolbarViewerMiddle" class="toolbarHorizontalGroup">
@@ -637,5 +620,86 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     </div> <!-- outerContainer -->
     <div id="printContainer"></div>
-  </body>
+
+    <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" id="btns" style="display: none;">
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="width:900px;margin-left: -200px;">
+      <div class="modal-header">
+        <h3 class="modal-title btn btn-light" id="exampleModalLabel" style="color: brown;font-size: 30px;font-family: Times New Roman, Times, serif;font-weight: bold;" onclick="openUrl()">Word</h3>
+        <button type="button" class="close btn btn-light" data-dismiss="modal" aria-label="Close" style="color: red;font-size: 30px;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <div class="form-control" style="font-size: 28px;display: flex;font-family: Arial, Helvetica, sans-serif;font-weight: bold;">Meaning:&nbsp; <div id="mean" style="font-size: 28px;word-wrap: break-word;"></div></div>
+            
+          </div>
+          <div class="form-group">
+            <div class="form-control" style="font-size: 28px;display: flex;font-family: Arial, Helvetica, sans-serif;font-weight: bold;">Example:&nbsp; <div id="ex"  style="font-size: 28px;word-wrap: break-word;"></div>
+          </div></div>
+            
+          <div class="form-group">
+            <div class="form-control" style="font-size: 28px;display: flex;font-family: Arial, Helvetica, sans-serif;font-weight: bold;">Synonym:&nbsp; <div id="syn"  style="font-size: 28px;word-wrap: break-word;"></div></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
+  const btn=document.querySelector("#btns")
+  let word = "";
+  function getSelectionText() {
+    
+    if (window.getSelection) {
+        word = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        word = document.selection.createRange().word;
+    }
+    if(word){
+      btn.click();
+      document.querySelector(".modal-title").innerText=word;
+      getData(word);
+    }
+}
+document.addEventListener('mouseup', getSelectionText);
+
+const getData = async (x) => {
+  let data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${x}`);
+  let jsonData=await data.json();
+  document.querySelector("#mean").innerText=(jsonData[0].meanings[0].definitions[0].definition || "");
+
+  document.querySelector("#ex").innerText=(jsonData[0].meanings[0].definitions[0].example || "");
+
+  document.querySelector("#syn").innerText=(jsonData[0].meanings[0].synonyms || "");
+}
+
+function change() {
+  document.querySelector("#mean").innerText="Meaning:";
+  document.querySelector("#ex").innerText="Example:";
+  document.querySelector("#syn").innerText="Synonym:";
+}
+
+document.addEventListener('mousedown',change)
+
+function openUrl() {
+  window.open(`https://www.google.com/search?q=${word}`, '_blank');
+}
+</script>
+</body>
 </html>
